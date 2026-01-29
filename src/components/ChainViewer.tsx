@@ -97,7 +97,7 @@ function EmailCard({ node, isLatest, isOrigin, idx }: { node: EmailNode, isLates
                                 isOrigin ? "bg-emerald-500 text-white" :
                                     isLatest ? "bg-blue-600 text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
                             )}>
-                                {isOrigin ? "The Deep Source" : isLatest ? "Most Recent Message" : `Hop ${node.depth}`}
+                                {`MESSAGE ${idx + 1} • `}{isOrigin ? "The Deep Source" : isLatest ? "Most Recent Message" : `Hop ${node.depth}`}
                             </span>
 
                             <div className="flex items-center gap-2 px-2.5 py-1 bg-slate-50 dark:bg-slate-950/40 rounded-full border border-slate-100 dark:border-slate-800">

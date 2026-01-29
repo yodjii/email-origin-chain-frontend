@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp, Quote } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp, Quote, Bug } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -15,6 +15,7 @@ export default function Home() {
   const [isTextCopied, setIsTextCopied] = useState(false);
   const [devView, setDevView] = useState<'none' | 'transcript' | 'raw'>('none');
   const [rawInput, setRawInput] = useState('');
+  const [showDebugMenu, setShowDebugMenu] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
@@ -199,53 +200,18 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
-                  <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
-                    <button
-                      onClick={handleCopyJson}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all"
-                      title="Copy raw analysis object"
-                    >
-                      {isCopied ? <Check size={14} className="text-emerald-500" /> : <Code size={14} />}
-                      {isCopied ? "Copied" : "JSON"}
-                    </button>
-                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
-                    <button
-                      onClick={() => setDevView(prev => prev === 'transcript' ? 'none' : 'transcript')}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
-                        devView === 'transcript'
-                          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
-                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800"
-                      )}
-                      title="View sequential transcript"
-                    >
-                      {devView === 'transcript' ? <ChevronUp size={14} /> : <Eye size={14} />}
-                      VIEW
-                    </button>
-                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
-                    <button
-                      onClick={() => setDevView(prev => prev === 'raw' ? 'none' : 'raw')}
-                      className={cn(
-                        "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
-                        devView === 'raw'
-                          ? "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
-                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800"
-                      )}
-                      title="View original EML source"
-                    >
-                      {devView === 'raw' ? <ChevronUp size={14} /> : <Terminal size={14} />}
-                      RAW
-                    </button>
-                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
-                    <button
-                      onClick={handleCopyText}
-                      className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all"
-                      title="Copy full transcript"
-                    >
-                      {isTextCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
-                      {isTextCopied ? "Copied" : "Text"}
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => setShowDebugMenu(!showDebugMenu)}
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all shadow-sm active:scale-95",
+                      showDebugMenu
+                        ? "bg-blue-600 text-white shadow-blue-500/20"
+                        : "bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:border-blue-500/30"
+                    )}
+                  >
+                    <Bug size={16} className={cn(showDebugMenu && "animate-pulse")} />
+                    Debug
+                  </button>
 
                   <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em]">
                     {result.history.length} <span className="opacity-50">Hops</span>
@@ -253,7 +219,54 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 </div>
               </div>
 
-
+              {/* Centered Debug Submenu */}
+              {showDebugMenu && (
+                <div className="flex justify-center animate-in fade-in zoom-in-95 duration-300">
+                  <div className="flex items-center gap-1 p-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                    <button
+                      onClick={handleCopyJson}
+                      className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+                    >
+                      {isCopied ? <Check size={14} className="text-emerald-500" /> : <Code size={14} />}
+                      JSON
+                    </button>
+                    <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                      onClick={() => setDevView(prev => prev === 'transcript' ? 'none' : 'transcript')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
+                        devView === 'transcript'
+                          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      )}
+                    >
+                      {devView === 'transcript' ? <ChevronUp size={14} /> : <Eye size={14} />}
+                      VIEW
+                    </button>
+                    <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                      onClick={() => setDevView(prev => prev === 'raw' ? 'none' : 'raw')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
+                        devView === 'raw'
+                          ? "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      )}
+                    >
+                      {devView === 'raw' ? <ChevronUp size={14} /> : <Terminal size={14} />}
+                      RAW
+                    </button>
+                    <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                      onClick={handleCopyText}
+                      className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
+                    >
+                      {isTextCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                      TEXT
+                    </button>
+                  </div>
+                </div>
+              )}
               {/* Developer Tools Panel */}
               {devView !== 'none' && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-500">
@@ -340,6 +353,6 @@ SUBJECT: ${node.subject || 'N/A'}`;
           <p className="text-sm text-slate-500 font-medium">© 2026 Email Origin Reveal. An Open Source Initiative by Flo (yodjii)</p>
         </div>
       </footer>
-    </main>
+    </main >
   );
 }

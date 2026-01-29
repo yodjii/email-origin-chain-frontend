@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -11,6 +11,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [isCopied, setIsCopied] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
@@ -52,6 +53,13 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleCopyJson = () => {
+    if (!result) return;
+    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
@@ -152,8 +160,18 @@ export default function Home() {
                   </h3>
                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-medium">Reconstruction sequence based on hybrid detection patterns</p>
                 </div>
-                <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em]">
-                  {result.history.length} <span className="opacity-50">Segment Lifecycle</span>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleCopyJson}
+                    className="flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all border border-slate-200 dark:border-slate-700 active:scale-95"
+                  >
+                    {isCopied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
+                    {isCopied ? "Copied" : "Copy JSON"}
+                  </button>
+                  <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em]">
+                    {result.history.length} <span className="opacity-50">Segment Lifecycle</span>
+                  </div>
                 </div>
               </div>
 
@@ -169,6 +187,6 @@ export default function Home() {
           <p className="text-sm text-slate-500 font-medium">© 2026 Email Origin Reveal. An Open Source Initiative by Flo (yodjii)</p>
         </div>
       </footer>
-    </main>
+    </main >
   );
 }

@@ -60,10 +60,13 @@ export default function Home() {
   };
 
   const handleCopyJson = () => {
-    if (!result) return;
-    navigator.clipboard.writeText(JSON.stringify(result, null, 2));
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
+    if (!result || !navigator?.clipboard) return;
+    navigator.clipboard.writeText(JSON.stringify(result, null, 2))
+      .then(() => {
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      })
+      .catch(err => console.error('Failed to copy JSON:', err));
   };
 
   const generateTranscript = () => {
@@ -80,11 +83,14 @@ SUBJECT: ${node.subject || 'N/A'}`;
 
   const handleCopyText = () => {
     const text = generateTranscript();
-    if (!text) return;
+    if (!text || !navigator?.clipboard) return;
 
-    navigator.clipboard.writeText(text);
-    setIsTextCopied(true);
-    setTimeout(() => setIsTextCopied(false), 2000);
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        setIsTextCopied(true);
+        setTimeout(() => setIsTextCopied(false), 2000);
+      })
+      .catch(err => console.error('Failed to copy text:', err));
   };
 
   return (

@@ -10,7 +10,7 @@ interface InputSectionProps {
 }
 
 export function InputSection({ onAnalyze, isLoading }: InputSectionProps) {
-    const [tab, setTab] = useState<'text' | 'file'>('text');
+    const [tab, setTab] = useState<'text' | 'file'>('file');
     const [text, setText] = useState('');
     const [fileName, setFileName] = useState<string | null>(null);
     const [isDragging, setIsDragging] = useState(false);
@@ -26,6 +26,9 @@ export function InputSection({ onAnalyze, isLoading }: InputSectionProps) {
         setFileName(file.name);
         const content = await file.text();
         setText(content);
+        if (content.trim()) {
+            onAnalyze(content);
+        }
     };
 
     const handleDrop = (e: React.DragEvent) => {
@@ -44,18 +47,6 @@ export function InputSection({ onAnalyze, isLoading }: InputSectionProps) {
         <div className="w-full glass-card rounded-2xl p-2 transition-all duration-500 hover:shadow-2xl">
             <div className="flex p-1 gap-1">
                 <button
-                    onClick={() => setTab('text')}
-                    className={cn(
-                        "flex-1 py-3 flex items-center justify-center gap-2 rounded-xl transition-all duration-300",
-                        tab === 'text'
-                            ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm font-semibold"
-                            : "text-slate-500 hover:bg-white/50 dark:hover:bg-slate-800/30"
-                    )}
-                >
-                    <FileText size={16} />
-                    <span className="text-sm">Direct Paste</span>
-                </button>
-                <button
                     onClick={() => setTab('file')}
                     className={cn(
                         "flex-1 py-3 flex items-center justify-center gap-2 rounded-xl transition-all duration-300",
@@ -66,6 +57,18 @@ export function InputSection({ onAnalyze, isLoading }: InputSectionProps) {
                 >
                     <Upload size={16} />
                     <span className="text-sm">Upload EML</span>
+                </button>
+                <button
+                    onClick={() => setTab('text')}
+                    className={cn(
+                        "flex-1 py-3 flex items-center justify-center gap-2 rounded-xl transition-all duration-300",
+                        tab === 'text'
+                            ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm font-semibold"
+                            : "text-slate-500 hover:bg-white/50 dark:hover:bg-slate-800/30"
+                    )}
+                >
+                    <FileText size={16} />
+                    <span className="text-sm">Direct Paste</span>
                 </button>
             </div>
 

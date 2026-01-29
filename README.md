@@ -13,7 +13,14 @@ Powered by the [**email-origin-chain**](https://github.com/yodjii/email-origin-c
 ## ✨ Key Features
 
 - **🔎 Forensic Reconstruction**: Automatically detects nested forwarded messages using a hybrid engine (MIME structure analysis + heuristic text parsing).
+- **⚖️ Confidence Scoring**: Analyzes email density, sender consistency, and quote levels to provide a reliability index (0-100%).
+- **⚠️ Security Alerts**: High-visibility warnings for low-confidence results (< 50%) with detailed explanation tooltips.
 - **⏳ Chronological Visualization**: Displays the email chain in a logical flow from the original sender ("The Deep Source") to the final recipient ("Most Recent Message").
+- **🛠️ Expert Debug Console**: A dedicated suite for developers including:
+    - **JSON Viewer**: Access to the raw extraction data.
+    - **Scoring Dashboard**: Visual reliability gauge and breakdown of triggered signals (bonuses/penalties).
+    - **Audit Trail**: Step-by-step sequential transcription of the conversation hops.
+    - **Source View**: Access to decoded MIME bodies and cleaned text.
 - **📎 Asset Encapsulation**: Identifies and lists attachments present at each stage of the conversation history.
 - **🛡️ Security Flags**: Highlights verification status (e.g., "Verified Meta" for MIME headers vs "Text Scan" for inline detection).
 - **🎨 Premium UI**: A modern, responsive interface built with Tailwind CSS v4, featuring glassmorphism, micro-interactions, and dark mode support.

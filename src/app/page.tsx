@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp, Quote, Bug } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp, Quote, Bug, AlertTriangle, ShieldAlert, BarChart3, Activity } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -13,7 +13,7 @@ export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isCopied, setIsCopied] = useState(false);
   const [isTextCopied, setIsTextCopied] = useState(false);
-  const [devView, setDevView] = useState<'none' | 'transcript' | 'source' | 'clean'>('none');
+  const [devView, setDevView] = useState<'none' | 'transcript' | 'source' | 'clean' | 'scoring'>('none');
   const [showDebugMenu, setShowDebugMenu] = useState(false);
 
   useEffect(() => {
@@ -204,6 +204,20 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                  {result.confidence_score < 50 && (
+                    <div className="group relative flex items-center gap-2 px-4 py-3 bg-red-500 text-white rounded-2xl shadow-lg shadow-red-500/20 animate-pulse cursor-help">
+                      <AlertTriangle size={16} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Low Confidence</span>
+
+                      {/* Tooltip */}
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-slate-900 text-white text-[10px] font-medium leading-relaxed rounded-xl shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-[60]">
+                        <div className="font-black text-red-400 uppercase tracking-widest mb-1">Security Warning</div>
+                        {result.confidence_description}
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-8 border-transparent border-t-slate-900" />
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     onClick={() => {
                       if (showDebugMenu) setDevView('none');
@@ -229,13 +243,26 @@ SUBJECT: ${node.subject || 'N/A'}`;
               {/* Centered Debug Submenu */}
               {showDebugMenu && (
                 <div className="flex justify-center animate-in fade-in zoom-in-95 duration-300">
-                  <div className="flex items-center gap-1 p-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                  <div className="flex items-center gap-1 p-1.5 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl shadow-slate-200/50 dark:shadow-none overflow-x-auto max-w-full">
                     <button
                       onClick={handleCopyJson}
                       className="flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all"
                     >
                       {isCopied ? <Check size={14} className="text-emerald-500" /> : <Code size={14} />}
                       JSON
+                    </button>
+                    <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
+                    <button
+                      onClick={() => setDevView(prev => prev === 'scoring' ? 'none' : 'scoring')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
+                        devView === 'scoring'
+                          ? "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+                          : "text-slate-500 hover:text-amber-600 dark:text-slate-400 dark:hover:text-amber-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      )}
+                    >
+                      {devView === 'scoring' ? <ChevronUp size={14} /> : <ShieldCheck size={14} />}
+                      SCORING
                     </button>
                     <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
                     <button
@@ -294,16 +321,69 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
-                      {devView === 'transcript' ? 'Sequential Audit Trail' : devView === 'source' ? 'Decoded MIME Body' : 'Cleaned Message Bodies'}
+                      {devView === 'transcript' ? 'Sequential Audit Trail' : devView === 'source' ? 'Decoded MIME Body' : devView === 'clean' ? 'Cleaned Message Bodies' : 'Confidence Scoring Analysis'}
                     </span>
                   </div>
-                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                    <pre className={cn(
-                      "text-slate-700 dark:text-slate-300 leading-relaxed",
-                      "whitespace-pre-wrap"
-                    )}>
-                      {devView === 'transcript' ? generateTranscript() : devView === 'source' ? (result.full_body || result.text) : generateCleanText()}
-                    </pre>
+                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                    {devView === 'scoring' ? (
+                      <div className="space-y-6">
+                        <div className="flex items-center gap-6">
+                          <div className="relative">
+                            <svg className="w-20 h-20 transform -rotate-90">
+                              <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-slate-200 dark:text-slate-800" />
+                              <circle cx="40" cy="40" r="36" stroke="currentColor" strokeWidth="8" fill="transparent" strokeDasharray={2 * Math.PI * 36} strokeDashoffset={2 * Math.PI * 36 * (1 - result.confidence_score / 100)} className={cn(result.confidence_score >= 80 ? "text-emerald-500" : result.confidence_score >= 50 ? "text-amber-500" : "text-red-500", "transition-all duration-1000")} />
+                            </svg>
+                            <div className="absolute inset-0 flex items-center justify-center text-xl font-black">{result.confidence_score}%</div>
+                          </div>
+                          <div>
+                            <h5 className="text-sm font-black uppercase tracking-tight mb-1">Reliability Index</h5>
+                            <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-sans">{result.confidence_description}</p>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="space-y-3">
+                            <h6 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                              <Activity size={12} /> Detected Signals
+                            </h6>
+                            <div className="space-y-2">
+                              {Object.entries(result.confidence_signals || {}).map(([signal, impact], sIdx) => (
+                                <div key={sIdx} className="flex items-center justify-between p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                                  <span className="text-[10px] font-bold text-slate-600 dark:text-slate-400 font-sans">{signal}</span>
+                                  <span className={cn("text-[10px] font-black px-2 py-0.5 rounded-lg", (impact as number) > 0 ? "bg-emerald-500/10 text-emerald-600" : "bg-red-500/10 text-red-600")}>
+                                    {(impact as number) > 0 ? `+${impact}` : (impact as number)}
+                                  </span>
+                                </div>
+                              ))}
+                              {Object.keys(result.confidence_signals || {}).length === 0 && (
+                                <p className="text-[10px] italic text-slate-400 py-2">No specific signals triggered.</p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="space-y-3">
+                            <h6 className="text-[10px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2">
+                              <BarChart3 size={12} /> Detailed Reasons
+                            </h6>
+                            <div className="space-y-2">
+                              {(result.confidence_reasons || []).map((reason: string, rIdx: number) => (
+                                <div key={rIdx} className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex gap-3 items-start">
+                                  <div className="w-1 h-3 mt-1 rounded-full bg-blue-500" />
+                                  <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 font-sans leading-tight">{reason}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <pre className={cn(
+                        "text-slate-700 dark:text-slate-300 leading-relaxed",
+                        "whitespace-pre-wrap"
+                      )}>
+                        {devView === 'transcript' ? generateTranscript() : devView === 'source' ? (result.full_body || result.text) : generateCleanText()}
+                      </pre>
+                    )}
                   </div>
                   <div className="flex justify-center mt-2">
                     <button

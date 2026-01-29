@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp, Quote } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -227,6 +227,53 @@ SUBJECT: ${node.subject || 'N/A'}`;
 
                   <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em]">
                     {result.history.length} <span className="opacity-50">Hops</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Deep Source Content Preview */}
+              <div className="relative group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-[2rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
+                <div className="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 dark:shadow-none">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-3 bg-amber-500 text-white rounded-2xl shadow-lg shadow-amber-500/20">
+                        <Quote size={20} />
+                      </div>
+                      <div>
+                        <h4 className="font-black text-slate-900 dark:text-white uppercase tracking-tighter">Extracted Deep Source</h4>
+                        <p className="text-xs text-slate-500 font-bold uppercase tracking-widest opacity-60">Cleaned Body Transcription</p>
+                      </div>
+                    </div>
+                    <div className="hidden sm:block text-right">
+                      <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Source Confidence</span>
+                      <div className="flex gap-1 mt-1 justify-end">
+                        {[1, 2, 3, 4, 5].map(i => <div key={i} className="h-1 w-4 bg-emerald-500 rounded-full" />)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-slate-50 dark:bg-slate-950/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
+                    <pre className="whitespace-pre-wrap text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-sm italic">
+                      {result.deepest?.text || "No readable content found in the deepest source."}
+                    </pre>
+                  </div>
+
+                  <div className="mt-6 flex flex-wrap gap-4 items-center justify-between border-t border-slate-50 dark:border-slate-800/50 pt-6">
+                    <div className="flex gap-8">
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Originator</p>
+                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
+                          {result.deepest?.from?.name || result.deepest?.from?.address || 'Unknown'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Subject Integrity</p>
+                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 italic">
+                          {result.deepest?.subject || 'No Subject'}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

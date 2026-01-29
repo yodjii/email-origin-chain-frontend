@@ -253,8 +253,36 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 </div>
               </div>
 
+
+              {/* Developer Tools Panel */}
+              {devView !== 'none' && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
+                      {devView === 'transcript' ? 'Sequential Audit Trail' : 'Original EML Source'}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                    <pre className={cn(
+                      "text-slate-700 dark:text-slate-300 leading-relaxed",
+                      devView === 'transcript' ? "whitespace-pre-wrap" : "whitespace-pre"
+                    )}>
+                      {devView === 'transcript' ? generateTranscript() : rawInput}
+                    </pre>
+                  </div>
+                  <div className="flex justify-center mt-2">
+                    <button
+                      onClick={() => setDevView('none')}
+                      className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
+                    >
+                      <ChevronUp size={12} /> Hide Tools
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Deep Source Content Preview */}
-              <div className="relative group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+              <div className="relative group animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 mt-8">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-emerald-500 rounded-[2rem] blur opacity-10 group-hover:opacity-20 transition duration-1000"></div>
                 <div className="relative bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-[2rem] p-8 shadow-xl shadow-slate-200/50 dark:shadow-none">
                   <div className="flex items-start justify-between mb-6">
@@ -299,33 +327,6 @@ SUBJECT: ${node.subject || 'N/A'}`;
                   </div>
                 </div>
               </div>
-
-              {/* Developer Tools Panel */}
-              {devView !== 'none' && (
-                <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
-                      {devView === 'transcript' ? 'Sequential Audit Trail' : 'Original EML Source'}
-                    </span>
-                  </div>
-                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                    <pre className={cn(
-                      "text-slate-700 dark:text-slate-300 leading-relaxed",
-                      devView === 'transcript' ? "whitespace-pre-wrap" : "whitespace-pre"
-                    )}>
-                      {devView === 'transcript' ? generateTranscript() : rawInput}
-                    </pre>
-                  </div>
-                  <div className="flex justify-center mt-2">
-                    <button
-                      onClick={() => setDevView('none')}
-                      className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
-                    >
-                      <ChevronUp size={12} /> Hide Tools
-                    </button>
-                  </div>
-                </div>
-              )}
 
               <ChainViewer history={result.history} />
             </div>

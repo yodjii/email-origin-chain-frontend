@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -125,10 +125,16 @@ export default function Home() {
             Reconstruct complete conversation trails with forensic precision. Upload .eml files to reveal depths that traditional clients hide.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-8 pt-4 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
-            <div className="flex items-center gap-2 text-xs font-bold"><Terminal size={14} /> Node.js Certified</div>
-            <div className="flex items-center gap-2 text-xs font-bold"><Cpu size={14} /> Hybrid Engine</div>
-            <div className="flex items-center gap-2 text-xs font-bold"><Box size={14} /> Plugin Ready</div>
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-4 opacity-80 hover:opacity-100 transition-opacity duration-500">
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full text-xs font-bold uppercase tracking-wider cursor-help" title="Data is processed in-memory and instantly identified. No database storage.">
+              <ShieldCheck size={14} /> Zero Retention
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 rounded-full text-xs font-bold uppercase tracking-wider cursor-help" title="Execution occurs in volatile RAM environment only.">
+              <Cpu size={14} /> RAM Processing Only
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 rounded-full text-xs font-bold uppercase tracking-wider cursor-help" title="Your input is never logged to any permanent file or external server.">
+              <EyeOff size={14} /> 100% Private
+            </div>
           </div>
         </section>
 

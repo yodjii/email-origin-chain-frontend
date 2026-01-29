@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { extractDeepestHybrid } from 'email-origin-chain';
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,7 +9,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing content' }, { status: 400 });
     }
 
-    const { extractDeepestHybrid } = await import('email-origin-chain');
     const result = await extractDeepestHybrid(content);
 
     return NextResponse.json(result);

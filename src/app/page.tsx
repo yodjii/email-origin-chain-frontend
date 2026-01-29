@@ -204,7 +204,10 @@ SUBJECT: ${node.subject || 'N/A'}`;
 
                 <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
                   <button
-                    onClick={() => setShowDebugMenu(!showDebugMenu)}
+                    onClick={() => {
+                      if (showDebugMenu) setDevView('none');
+                      setShowDebugMenu(!showDebugMenu);
+                    }}
                     className={cn(
                       "flex items-center gap-2 px-4 py-3 text-xs font-black uppercase tracking-widest rounded-2xl transition-all shadow-sm active:scale-95",
                       showDebugMenu

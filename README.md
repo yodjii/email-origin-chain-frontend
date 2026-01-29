@@ -30,7 +30,7 @@ Powered by the [**email-origin-chain**](https://github.com/yodjii/email-origin-c
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yodjii/email-origin-reveal.git
+   git clone https://github.com/yodjii/email-origin-chain-frontend.git
    cd email-origin-reveal
    ```
 

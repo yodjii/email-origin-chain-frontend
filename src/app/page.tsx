@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff } from 'lucide-react';
+import { Mail, Search, Info, Github, Moon, Sun, Terminal, Lock, Box, Cpu, Copy, Check, ShieldCheck, EyeOff, FileText, Code, Eye, ChevronUp } from 'lucide-react';
 import { InputSection } from '@/components/InputSection';
 import { ChainViewer } from '@/components/ChainViewer';
 import { cn } from '@/lib/utils';
@@ -12,6 +12,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isCopied, setIsCopied] = useState(false);
+  const [isTextCopied, setIsTextCopied] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
@@ -60,6 +62,27 @@ export default function Home() {
     navigator.clipboard.writeText(JSON.stringify(result, null, 2));
     setIsCopied(true);
     setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const generateTranscript = () => {
+    if (!result) return '';
+    return result.history.map((node: any, i: number) => {
+      const header = `=== MESSAGE ${i + 1} (${i === 0 ? 'ORIGIN' : i === result.history.length - 1 ? 'LATEST' : 'HOP'}) ===`;
+      const meta = `DATE: ${node.date_iso || node.date_raw || 'UNKNOWN'}
+FROM: ${node.from?.name ? `${node.from.name} <${node.from.address}>` : node.from?.address || 'UNKNOWN'}
+SUBJECT: ${node.subject || 'N/A'}`;
+
+      return `${header}\n${meta}\n${'-'.repeat(50)}\n${node.text?.trim() || '(No content)'}`;
+    }).join('\n\n\n');
+  };
+
+  const handleCopyText = () => {
+    const text = generateTranscript();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text);
+    setIsTextCopied(true);
+    setTimeout(() => setIsTextCopied(false), 2000);
   };
 
   return (
@@ -167,19 +190,65 @@ export default function Home() {
                   <p className="text-slate-500 dark:text-slate-400 text-sm mt-2 font-medium">Reconstruction sequence based on hybrid detection patterns</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={handleCopyJson}
-                    className="flex items-center gap-2 px-4 py-3 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all border border-slate-200 dark:border-slate-700 active:scale-95"
-                  >
-                    {isCopied ? <Check size={16} className="text-emerald-500" /> : <Copy size={16} />}
-                    {isCopied ? "Copied" : "Copy JSON"}
-                  </button>
+                <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
+                  <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+                    <button
+                      onClick={handleCopyJson}
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all"
+                      title="Copy raw analysis object"
+                    >
+                      {isCopied ? <Check size={14} className="text-emerald-500" /> : <Code size={14} />}
+                      {isCopied ? "Copied" : "JSON"}
+                    </button>
+                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
+                    <button
+                      onClick={() => setShowTranscript(prev => !prev)}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
+                        showTranscript
+                          ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
+                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800"
+                      )}
+                      title="View transcript"
+                    >
+                      {showTranscript ? <ChevronUp size={14} /> : <Eye size={14} />}
+                      View
+                    </button>
+                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
+                    <button
+                      onClick={handleCopyText}
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800 rounded-lg transition-all"
+                      title="Copy full transcript"
+                    >
+                      {isTextCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                      {isTextCopied ? "Copied" : "Text"}
+                    </button>
+                  </div>
+
                   <div className="px-5 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-[0.2em]">
-                    {result.history.length} <span className="opacity-50">Segment Lifecycle</span>
+                    {result.history.length} <span className="opacity-50">Hops</span>
                   </div>
                 </div>
               </div>
+
+              {/* Transcript Viewer Panel */}
+              {showTranscript && (
+                <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-xs overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                    <pre className="whitespace-pre-wrap text-slate-700 dark:text-slate-300 leading-relaxed">
+                      {generateTranscript()}
+                    </pre>
+                  </div>
+                  <div className="flex justify-center mt-2">
+                    <button
+                      onClick={() => setShowTranscript(false)}
+                      className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
+                    >
+                      <ChevronUp size={12} /> Close Transcript
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <ChainViewer history={result.history} />
             </div>
@@ -193,6 +262,6 @@ export default function Home() {
           <p className="text-sm text-slate-500 font-medium">© 2026 Email Origin Reveal. An Open Source Initiative by Flo (yodjii)</p>
         </div>
       </footer>
-    </main >
+    </main>
   );
 }

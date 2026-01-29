@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    serverExternalPackages: ['email-origin-chain', 'email-forward-parser', 're2', 'mailparser', 'any-date-parser', 'mailsplit'],
+    serverExternalPackages: ['re2', 'mailparser'],
     typescript: {
         ignoreBuildErrors: true,
     },

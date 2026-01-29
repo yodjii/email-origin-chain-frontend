@@ -74,6 +74,7 @@ export default function Home() {
       const header = `=== MESSAGE ${i + 1} (${i === 0 ? 'ORIGIN' : i === result.history.length - 1 ? 'LATEST' : 'HOP'}) ===`;
       const meta = `DATE: ${node.date_iso || node.date_raw || 'UNKNOWN'}
 FROM: ${node.from?.name ? `${node.from.name} <${node.from.address}>` : node.from?.address || 'UNKNOWN'}
+TO: ${node.to?.name ? `${node.to.name} <${node.to.address}>` : node.to?.address || 'UNKNOWN'}
 SUBJECT: ${node.subject || 'N/A'}`;
 
       return `${header}\n${meta}\n${'-'.repeat(50)}\n${node.text?.trim() || '(No content)'}`;

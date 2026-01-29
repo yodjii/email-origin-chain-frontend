@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 
 interface EmailNode {
     from?: { name?: string; address?: string } | null;
+    to?: { name?: string; address?: string } | null;
     subject?: string | null;
     date_raw?: string | null;
     date_iso?: string | null;
@@ -160,9 +161,15 @@ function EmailCard({ node, isLatest, isOrigin, idx }: { node: EmailNode, isLates
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="p-4 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-100 dark:border-slate-800/50">
                                     <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
-                                        <Fingerprint size={12} /> Digital Identity
+                                        <Fingerprint size={12} /> From
                                     </span>
                                     <p className="text-xs text-slate-600 dark:text-slate-400 font-mono break-all line-clamp-1 hover:line-clamp-none transition-all">{node.from?.address || "N/A"}</p>
+                                </div>
+                                <div className="p-4 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-100 dark:border-slate-800/50">
+                                    <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">
+                                        <User size={12} className="text-blue-500" /> To
+                                    </span>
+                                    <p className="text-xs text-slate-600 dark:text-slate-400 font-mono break-all line-clamp-1 hover:line-clamp-none transition-all">{node.to?.address || node.to?.name || "N/A"}</p>
                                 </div>
                                 <div className="p-4 bg-slate-50 dark:bg-slate-950/30 rounded-2xl border border-slate-100 dark:border-slate-800/50">
                                     <span className="flex items-center gap-1.5 text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">

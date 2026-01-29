@@ -51,7 +51,7 @@ export function ChainViewer({ history }: { history: EmailNode[] }) {
 }
 
 function EmailCard({ node, isLatest, isOrigin, idx }: { node: EmailNode, isLatest: boolean, isOrigin: boolean, idx: number }) {
-    const [isExpanded, setIsExpanded] = useState(isOrigin || isLatest);
+    const [isExpanded, setIsExpanded] = useState(true);
 
     const isMissingFrom = !node.from || (!node.from.name && !node.from.address);
     const isMissingDate = !node.date_iso;

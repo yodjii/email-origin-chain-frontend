@@ -13,8 +13,7 @@ export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isCopied, setIsCopied] = useState(false);
   const [isTextCopied, setIsTextCopied] = useState(false);
-  const [devView, setDevView] = useState<'none' | 'transcript' | 'raw' | 'clean'>('none');
-  const [rawInput, setRawInput] = useState('');
+  const [devView, setDevView] = useState<'none' | 'transcript' | 'source' | 'clean'>('none');
   const [showDebugMenu, setShowDebugMenu] = useState(false);
 
   useEffect(() => {
@@ -31,7 +30,6 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     setResult(null);
-    setRawInput(content);
 
     try {
       const response = await fetch('/api/analyze', {
@@ -264,16 +262,17 @@ SUBJECT: ${node.subject || 'N/A'}`;
                     </button>
                     <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
                     <button
-                      onClick={() => setDevView(prev => prev === 'raw' ? 'none' : 'raw')}
+                      onClick={() => setDevView(prev => prev === 'source' ? 'none' : 'source')}
                       className={cn(
                         "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
-                        devView === 'raw'
+                        devView === 'source'
                           ? "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
                           : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
                       )}
+                      title="View decoded MIME text body"
                     >
-                      {devView === 'raw' ? <ChevronUp size={14} /> : <Terminal size={14} />}
-                      RAW
+                      {devView === 'source' ? <ChevronUp size={14} /> : <Terminal size={14} />}
+                      SOURCE
                     </button>
                     <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
                     <button
@@ -291,15 +290,15 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
-                      {devView === 'transcript' ? 'Sequential Audit Trail' : devView === 'raw' ? 'Original EML Source' : 'Cleaned Message Bodies'}
+                      {devView === 'transcript' ? 'Sequential Audit Trail' : devView === 'source' ? 'Decoded MIME Body' : 'Cleaned Message Bodies'}
                     </span>
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
                     <pre className={cn(
                       "text-slate-700 dark:text-slate-300 leading-relaxed",
-                      devView === 'raw' ? "whitespace-pre" : "whitespace-pre-wrap"
+                      "whitespace-pre-wrap"
                     )}>
-                      {devView === 'transcript' ? generateTranscript() : devView === 'raw' ? rawInput : generateCleanText()}
+                      {devView === 'transcript' ? generateTranscript() : devView === 'source' ? (result.full_body || result.text) : generateCleanText()}
                     </pre>
                   </div>
                   <div className="flex justify-center mt-2">

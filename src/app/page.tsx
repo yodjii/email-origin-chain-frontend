@@ -13,7 +13,7 @@ export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isCopied, setIsCopied] = useState(false);
   const [isTextCopied, setIsTextCopied] = useState(false);
-  const [devView, setDevView] = useState<'none' | 'transcript' | 'raw'>('none');
+  const [devView, setDevView] = useState<'none' | 'transcript' | 'raw' | 'clean'>('none');
   const [rawInput, setRawInput] = useState('');
   const [showDebugMenu, setShowDebugMenu] = useState(false);
 
@@ -80,6 +80,11 @@ SUBJECT: ${node.subject || 'N/A'}`;
 
       return `${header}\n${meta}\n${'-'.repeat(50)}\n${node.text?.trim() || '(No content)'}`;
     }).join('\n\n\n');
+  };
+
+  const generateCleanText = () => {
+    if (!result) return '';
+    return result.history.map((node: any) => node.text?.trim() || '').filter(Boolean).join('\n\n---\n\n');
   };
 
   const handleCopyText = () => {
@@ -245,6 +250,20 @@ SUBJECT: ${node.subject || 'N/A'}`;
                     </button>
                     <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
                     <button
+                      onClick={() => setDevView(prev => prev === 'clean' ? 'none' : 'clean')}
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
+                        devView === 'clean'
+                          ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
+                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      )}
+                      title="View all bodies without headers"
+                    >
+                      {devView === 'clean' ? <ChevronUp size={14} /> : <FileText size={14} />}
+                      CLEAN
+                    </button>
+                    <div className="w-px h-5 bg-slate-200 dark:bg-slate-800" />
+                    <button
                       onClick={() => setDevView(prev => prev === 'raw' ? 'none' : 'raw')}
                       className={cn(
                         "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all",
@@ -272,15 +291,15 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
-                      {devView === 'transcript' ? 'Sequential Audit Trail' : 'Original EML Source'}
+                      {devView === 'transcript' ? 'Sequential Audit Trail' : devView === 'raw' ? 'Original EML Source' : 'Cleaned Message Bodies'}
                     </span>
                   </div>
                   <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
                     <pre className={cn(
                       "text-slate-700 dark:text-slate-300 leading-relaxed",
-                      devView === 'transcript' ? "whitespace-pre-wrap" : "whitespace-pre"
+                      devView === 'raw' ? "whitespace-pre" : "whitespace-pre-wrap"
                     )}>
-                      {devView === 'transcript' ? generateTranscript() : rawInput}
+                      {devView === 'transcript' ? generateTranscript() : devView === 'raw' ? rawInput : generateCleanText()}
                     </pre>
                   </div>
                   <div className="flex justify-center mt-2">

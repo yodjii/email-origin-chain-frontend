@@ -4,14 +4,6 @@ const nextConfig = {
     typescript: {
         ignoreBuildErrors: true,
     },
-    webpack: (config, { isServer }) => {
-        if (isServer) {
-            config.externals.push({
-                're2': 'commonjs re2',
-            });
-        }
-        return config;
-    },
     turbopack: {}
 };
 

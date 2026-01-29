@@ -13,7 +13,8 @@ export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [isCopied, setIsCopied] = useState(false);
   const [isTextCopied, setIsTextCopied] = useState(false);
-  const [showTranscript, setShowTranscript] = useState(false);
+  const [devView, setDevView] = useState<'none' | 'transcript' | 'raw'>('none');
+  const [rawInput, setRawInput] = useState('');
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as 'light' | 'dark';
@@ -29,6 +30,7 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     setResult(null);
+    setRawInput(content);
 
     try {
       const response = await fetch('/api/analyze', {
@@ -202,17 +204,31 @@ SUBJECT: ${node.subject || 'N/A'}`;
                     </button>
                     <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
                     <button
-                      onClick={() => setShowTranscript(prev => !prev)}
+                      onClick={() => setDevView(prev => prev === 'transcript' ? 'none' : 'transcript')}
                       className={cn(
                         "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
-                        showTranscript
+                        devView === 'transcript'
                           ? "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400"
                           : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800"
                       )}
-                      title="View transcript"
+                      title="View sequential transcript"
                     >
-                      {showTranscript ? <ChevronUp size={14} /> : <Eye size={14} />}
-                      View
+                      {devView === 'transcript' ? <ChevronUp size={14} /> : <Eye size={14} />}
+                      VIEW
+                    </button>
+                    <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
+                    <button
+                      onClick={() => setDevView(prev => prev === 'raw' ? 'none' : 'raw')}
+                      className={cn(
+                        "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition-all",
+                        devView === 'raw'
+                          ? "bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400"
+                          : "text-slate-500 hover:text-blue-600 dark:text-slate-400 dark:hover:text-blue-400 hover:bg-white dark:hover:bg-slate-800"
+                      )}
+                      title="View original EML source"
+                    >
+                      {devView === 'raw' ? <ChevronUp size={14} /> : <Terminal size={14} />}
+                      RAW
                     </button>
                     <div className="w-px h-4 bg-slate-300 dark:bg-slate-700" />
                     <button
@@ -278,20 +294,28 @@ SUBJECT: ${node.subject || 'N/A'}`;
                 </div>
               </div>
 
-              {/* Transcript Viewer Panel */}
-              {showTranscript && (
+              {/* Developer Tools Panel */}
+              {devView !== 'none' && (
                 <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-xs overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
-                    <pre className="whitespace-pre-wrap text-slate-700 dark:text-slate-300 leading-relaxed">
-                      {generateTranscript()}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2">
+                      {devView === 'transcript' ? 'Sequential Audit Trail' : 'Original EML Source'}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-100 dark:bg-slate-950 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 font-mono text-[11px] overflow-x-auto max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700">
+                    <pre className={cn(
+                      "text-slate-700 dark:text-slate-300 leading-relaxed",
+                      devView === 'transcript' ? "whitespace-pre-wrap" : "whitespace-pre"
+                    )}>
+                      {devView === 'transcript' ? generateTranscript() : rawInput}
                     </pre>
                   </div>
                   <div className="flex justify-center mt-2">
                     <button
-                      onClick={() => setShowTranscript(false)}
+                      onClick={() => setDevView('none')}
                       className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
                     >
-                      <ChevronUp size={12} /> Close Transcript
+                      <ChevronUp size={12} /> Hide Tools
                     </button>
                   </div>
                 </div>

@@ -255,7 +255,7 @@ SUBJECT: ${node.subject || 'N/A'}`;
 
                   <div className="bg-slate-50 dark:bg-slate-950/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800/50 max-h-[300px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 dark:scrollbar-thumb-slate-800">
                     <pre className="whitespace-pre-wrap text-slate-600 dark:text-slate-300 font-medium leading-relaxed text-sm italic">
-                      {result.deepest?.text || "No readable content found in the deepest source."}
+                      {result.history[0]?.text || "No readable content found in the deepest source."}
                     </pre>
                   </div>
 
@@ -264,13 +264,13 @@ SUBJECT: ${node.subject || 'N/A'}`;
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Originator</p>
                         <p className="text-sm font-bold text-slate-700 dark:text-slate-200">
-                          {result.deepest?.from?.name || result.deepest?.from?.address || 'Unknown'}
+                          {result.history[0]?.from?.name || result.history[0]?.from?.address || 'Unknown'}
                         </p>
                       </div>
                       <div>
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Subject Integrity</p>
                         <p className="text-sm font-bold text-slate-700 dark:text-slate-200 italic">
-                          {result.deepest?.subject || 'No Subject'}
+                          {result.history[0]?.subject || 'No Subject'}
                         </p>
                       </div>
                     </div>

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { extractDeepestHybrid } from 'email-origin-chain';
+import { extractDeepestHybrid } from '@/lib/engine';
 
 export async function POST(req: NextRequest) {
   try {
